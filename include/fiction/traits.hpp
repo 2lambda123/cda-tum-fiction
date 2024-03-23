@@ -1145,6 +1145,20 @@ template <class Ntk>
 inline constexpr bool has_is_and_xor_v = has_is_and_xor<Ntk>::value;
 #pragma endregion
 
+#pragma region is_input_ordered
+template <class Ntk, class = void>
+struct is_input_ordered : std::false_type
+{};
+
+template <class Ntk>
+struct is_input_ordered<Ntk, std::enable_if_t<Ntk::is_input_ordered, std::void_t<decltype(Ntk::is_input_ordered)>>>
+        : std::true_type
+{};
+
+template <class Ntk>
+inline constexpr bool is_input_ordered_v = is_input_ordered<Ntk>::value;
+#pragma endregion
+
 }  // namespace fiction
 
 #endif  // FICTION_TRAITS_HPP

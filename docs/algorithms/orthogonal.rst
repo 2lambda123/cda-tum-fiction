@@ -14,3 +14,17 @@ to a 3-graph. At the same time, the output layout will always be 2DDWave-clocked
 .. doxygenstruct:: fiction::orthogonal_physical_design_stats
    :members:
 .. doxygenfunction:: fiction::orthogonal(const Ntk& ntk, orthogonal_physical_design_params ps = {}, orthogonal_physical_design_stats* pst = nullptr)
+
+
+Signal Distribution Networks (SDNs)
+-----------------------------------
+SDNs add various functionalities on top of the `orthogonal` algorithm to, e.g., optimize resulting layouts or enable new layout classes that `orthogonal` couldn't originally handle.
+
+Orthogonal Ordering Network
+############################
+
+**Header:** ``fiction/algorithms/physical_design/ortho_ordering_network.hpp``
+
+Adjustment of `orthogonal`, which employs a special PI ordering prior to placement and routing that substantially reduces area and wire crossings in the final layout.
+
+.. doxygenfunction:: fiction::orthogonal_ordering_network
