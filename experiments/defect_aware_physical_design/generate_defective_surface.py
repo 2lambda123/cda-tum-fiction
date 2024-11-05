@@ -1,11 +1,11 @@
 # this one treats each H-Si as an array value
 
 
-import random
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+import secrets
 
 np.set_printoptions(threshold=sys.maxsize)
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
@@ -14,7 +14,7 @@ matplotlib_axes_logger.setLevel('ERROR')
 
 
 def rand_int(min, max):
-    return random.randit(min, max)
+    return secrets.SystemRandom().randit(min, max)
 
 
 class defect_surface:
@@ -79,8 +79,8 @@ class defect_surface:
             num_of_defects = int(defect[3] * self.total_defect_lattice_points)
             for i in range(1, num_of_defects):
 
-                random_width = random.randint(0, self.surface_width - 1)
-                random_height = random.randint(0, self.surface_height - 1)
+                random_width = secrets.SystemRandom().randint(0, self.surface_width - 1)
+                random_height = secrets.SystemRandom().randint(0, self.surface_height - 1)
 
                 if (random_width > random_width + defect[1] and random_height > random_height + defect[2]) or (
                         random_height % 2 == 1 and defect[2] % 2 == 0):
