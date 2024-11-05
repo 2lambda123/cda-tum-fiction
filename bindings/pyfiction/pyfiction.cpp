@@ -26,23 +26,24 @@
 #include "pyfiction/algorithms/physical_design/wiring_reduction.hpp"
 #include "pyfiction/algorithms/properties/critical_path_length_and_throughput.hpp"
 #include "pyfiction/algorithms/simulation/logic_simulation.hpp"
+#include "pyfiction/algorithms/simulation/sidb/assess_physical_population_stability.hpp"
 #include "pyfiction/algorithms/simulation/sidb/calculate_energy_and_state_type.hpp"
 #include "pyfiction/algorithms/simulation/sidb/can_positive_charges_occur.hpp"
+#include "pyfiction/algorithms/simulation/sidb/check_simulation_results_for_equivalence.hpp"
 #include "pyfiction/algorithms/simulation/sidb/compute_operational_ratio.hpp"
+#include "pyfiction/algorithms/simulation/sidb/convert_potential_to_distance.hpp"
 #include "pyfiction/algorithms/simulation/sidb/critical_temperature.hpp"
+#include "pyfiction/algorithms/simulation/sidb/defect_operational_domain.hpp"
 #include "pyfiction/algorithms/simulation/sidb/detect_bdl_pairs.hpp"
 #include "pyfiction/algorithms/simulation/sidb/detect_bdl_wires.hpp"
+#include "pyfiction/algorithms/simulation/sidb/determine_groundstate_from_simulation_results.hpp"
 #include "pyfiction/algorithms/simulation/sidb/determine_physically_valid_parameters.hpp"
+#include "pyfiction/algorithms/simulation/sidb/displacement_robustness_domain.hpp"
 #include "pyfiction/algorithms/simulation/sidb/energy_distribution.hpp"
 #include "pyfiction/algorithms/simulation/sidb/exhaustive_ground_state_simulation.hpp"
 #include "pyfiction/algorithms/simulation/sidb/is_ground_state.hpp"
 #include "pyfiction/algorithms/simulation/sidb/is_operational.hpp"
-// #include "pyfiction/algorithms/simulation/sidb/maximum_defect_influence_position_and_distance.hpp"
-#include "pyfiction/algorithms/simulation/sidb/assess_physical_population_stability.hpp"
-#include "pyfiction/algorithms/simulation/sidb/check_simulation_results_for_equivalence.hpp"
-#include "pyfiction/algorithms/simulation/sidb/convert_potential_to_distance.hpp"
-#include "pyfiction/algorithms/simulation/sidb/determine_groundstate_from_simulation_results.hpp"
-#include "pyfiction/algorithms/simulation/sidb/displacement_robustness_domain.hpp"
+#include "pyfiction/algorithms/simulation/sidb/maximum_defect_influence_position_and_distance.hpp"
 #include "pyfiction/algorithms/simulation/sidb/minimum_energy.hpp"
 #include "pyfiction/algorithms/simulation/sidb/occupation_probability_of_excited_states.hpp"
 #include "pyfiction/algorithms/simulation/sidb/operational_domain.hpp"
@@ -136,7 +137,8 @@ PYBIND11_MODULE(pyfiction, m)
     pyfiction::detect_bdl_wires(m);
     pyfiction::is_operational(m);
     pyfiction::operational_domain(m);
-    //    pyfiction::maximum_defect_influence_distance(m);
+    pyfiction::defect_operational_domain(m);
+    pyfiction::maximum_defect_influence_distance(m);
     pyfiction::exhaustive_ground_state_simulation(m);
     pyfiction::quicksim(m);
     pyfiction::quickexact(m);
@@ -199,11 +201,11 @@ PYBIND11_MODULE(pyfiction, m)
     pyfiction::sidb_charge_state(m);
     pyfiction::sidb_nm_position(m);
     pyfiction::sidb_nm_distance(m);
-    pyfiction::sidb_lattices(m);
+    pyfiction::sidb_lattice(m);
     pyfiction::charge_distribution_surfaces(m);
-    /**
-     * Input/Output
-     */
+    //    /**
+    //     * Input/Output
+    //     */
     pyfiction::write_dot_layout(m);
     pyfiction::write_fgl_layout(m);
     pyfiction::write_qca_layout(m);
@@ -217,8 +219,8 @@ PYBIND11_MODULE(pyfiction, m)
     pyfiction::write_operational_domain(m);
     pyfiction::read_fgl_layout(m);
     pyfiction::read_fqca_layout(m);
-    pyfiction::read_sqd_layout_100(m);
-    pyfiction::read_sqd_layout_111(m);
+    pyfiction::read_sqd_layout(m);
+
     /**
      * Utils
      */

@@ -14,6 +14,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <cstdint>
+
 namespace pyfiction
 {
 
@@ -26,7 +28,7 @@ void determine_physically_valid_parameters(pybind11::module& m)
     using namespace pybind11::literals;
 
     m.def("determine_physically_valid_parameters", &fiction::determine_physically_valid_parameters<Lyt>, "cds"_a,
-          "params"_a = fiction::operational_domain_params{});
+          "params"_a = fiction::operational_domain_params{}, DOC(fiction_determine_physically_valid_parameters));
 }
 
 }  // namespace detail
@@ -38,7 +40,6 @@ inline void determine_physically_valid_parameters(pybind11::module& m)
 
     py::class_<fiction::operational_domain<fiction::parameter_point, uint64_t>>(m, "physically_valid_parameters_domain",
                                                                                 DOC(fiction_operational_domain))
-        // todo add docu
         .def(py::init<>())
         .def_readwrite("dimensions", &fiction::operational_domain<fiction::parameter_point, uint64_t>::dimensions)
 
@@ -47,14 +48,16 @@ inline void determine_physically_valid_parameters(pybind11::module& m)
             [](const fiction::operational_domain<fiction::parameter_point, uint64_t>& domain,
                const fiction::parameter_point&                                        pp)
             {
-                try
+                auto result = domain.get_value(pp);
+
+                // Check if the result has a value
+                if (result.has_value())
                 {
-                    return domain.get_value(pp);
+                    return result.value();
                 }
-                catch (const std::out_of_range& e)
-                {
-                    throw py::value_error(e.what());
-                }
+                // If no value is present, raise a Python ValueError
+                throw py::value_error(
+                    "Invalid parameter point: no excited state number available for the provided parameter.");
             },
             "pp"_a);
 

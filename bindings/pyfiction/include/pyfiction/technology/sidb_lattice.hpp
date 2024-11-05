@@ -8,8 +8,6 @@
 #include "pyfiction/documentation.hpp"
 #include "pyfiction/types.hpp"
 
-#include <fiction/io/print_layout.hpp>
-#include <fiction/technology/sidb_lattice.hpp>
 #include <fiction/technology/sidb_lattice_orientations.hpp>
 #include <fiction/traits.hpp>
 
@@ -17,10 +15,7 @@
 #include <pybind11/stl.h>
 
 #include <algorithm>
-#include <cctype>
-#include <cstdint>
 #include <string>
-#include <vector>
 
 namespace pyfiction
 {
@@ -28,36 +23,39 @@ namespace pyfiction
 namespace detail
 {
 
-template <typename LatticeOrientation>
-void sidb_lattice_cell_level_layout(pybind11::module& m)
+/**
+ * Template function to bind SiDB lattices (regular and cube-coordinate) to Python.
+ *
+ * @tparam LatticeOrientation The lattice orientation (e.g., fiction::sidb_100_lattice, fiction::sidb_111_lattice).
+ * @tparam LayoutType The layout type (e.g., py_sidb_layout for regular layouts, py_sidb_layout_cube for cube layouts).
+ */
+template <typename LatticeOrientation, typename LayoutType>
+void sidb_lattice_cell_level_layout(pybind11::module& m, std::string lattice_name = "", std::string coordinate_tye = "")
 {
     namespace py = pybind11;
-    using namespace pybind11::literals;
+    using namespace py::literals;
 
-    // fetch technology name
+    // Fetch the lattice orientation name and convert to lowercase
     auto orientation = std::string{fiction::sidb_lattice_name<LatticeOrientation>};
     std::transform(orientation.begin(), orientation.end(), orientation.begin(), ::tolower);
 
-    using py_sidb_lattice = py_sidb_lattice<LatticeOrientation>;
-
-    /**
-     * SiDB lattice.
-     */
-    py::class_<py_sidb_lattice, py_sidb_layout>(m, fmt::format("sidb_{}_lattice", orientation).c_str(),
-                                                DOC(fiction_cell_level_layout), py::module_local())
-        .def(py::init<>())
-        .def(py::init<const fiction::aspect_ratio<py_sidb_layout>&, const std::string&>(), "dimension"_a, "name"_a = "",
-             DOC(fiction_sidb_lattice))
-
-        ;
+    py::class_<LatticeOrientation, LayoutType>(
+        m, fmt::format("sidb_{}_lattice{}", lattice_name, coordinate_tye).c_str(), DOC(fiction_cell_level_layout),
+        py::module_local())
+        .def(py::init<>())  // Default constructor
+        .def(py::init<const fiction::aspect_ratio<LayoutType>&, const std::string&>(), "dimension"_a, "name"_a = "",
+             DOC(fiction_sidb_lattice));
 }
 
 }  // namespace detail
 
-inline void sidb_lattices(pybind11::module& m)
+inline void sidb_lattice(pybind11::module& m)
 {
-    detail::sidb_lattice_cell_level_layout<fiction::sidb_100_lattice>(m);
-    detail::sidb_lattice_cell_level_layout<fiction::sidb_111_lattice>(m);
+    // Bind the regular 100 and 111 SiDB lattices
+    detail::sidb_lattice_cell_level_layout<py_sidb_100_lattice, py_sidb_layout>(m, "100");
+    detail::sidb_lattice_cell_level_layout<py_sidb_100_lattice_cube, py_sidb_layout_cube>(m, "100", "_cube");
+    detail::sidb_lattice_cell_level_layout<py_sidb_111_lattice, py_sidb_layout>(m, "111");
+    detail::sidb_lattice_cell_level_layout<py_sidb_111_lattice_cube, py_sidb_layout_cube>(m, "111", "_cube");
 }
 
 }  // namespace pyfiction
